@@ -1,4 +1,4 @@
-import {CONFIG} from './config.js';
+import {CONFIG} from './config.js?v=20261027b';
 import {SheetsApi} from './api-client.js';
 const $=id=>document.getElementById(id);
 const appId=new URLSearchParams(location.search).get('app')||CONFIG.defaultAppId;
