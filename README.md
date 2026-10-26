@@ -6,7 +6,7 @@ Một Apps Script Web App phục vụ nhiều app HTML trên GitHub Pages. Mỗi
 
 Tìm bảng riêng tư bằng Google Drive với tên chính xác `HTML Apps - Database Registry`. Liên kết database từng app nằm trong tab Apps. Tìm dự án Apps Script với tên `HTML Apps - Shared Google Sheets API`. ID các tài nguyên riêng tư không đưa vào repository công khai.
 
-URL Web App: chưa triển khai; xem DEPLOYMENT.md.
+URL Web App: đang chờ chủ tài khoản cấp quyền Google; xem DEPLOYMENT.md. Giao diện đã xuất bản tại https://datphuho88-dev.github.io/html-apps-shared-sheets-api/ nhưng chưa kết nối dữ liệu.
 
 ## Thư mục
 
@@ -23,7 +23,7 @@ App ID không phải mật khẩu. Người dùng nhập token ngẫu nhiên 256
 
 Tab `Grants` lưu SHA-256 của token, App ID, grantId, thao tác, sheet, hạn dùng và phạm vi. `scope=own` chỉ cho phép truy cập bản ghi có `_owner=grantId`; `scope=app` cho phép truy cập toàn bộ dữ liệu của app. Thu hồi bằng `status=revoked` hoặc đổi tokenHash. Token không thể đăng ký app hay chọn Spreadsheet ID.
 
-Tab `Access` giữ bản sao token để chủ tài khoản lấy mã ban đầu. Đây là dữ liệu bí mật trong **bảng Registry riêng tư**, chỉ chủ tài khoản có quyền. Có thể xóa ô token sau khi cất vào trình quản lý mật khẩu; API chỉ cần tokenHash trong Grants. Không chia sẻ Registry. Token cấp ban đầu hết hạn ngày 27/10/2027 UTC; có thể đổi hạn trong Grants. Ai giữ token có quyền tương ứng, nên cấp mỗi người một grant riêng.
+Tab `Access` giữ bản sao token để chủ tài khoản lấy mã ban đầu. Cột B được ẩn để giảm lộ mã khi xem bảng; chủ tài khoản có thể hiện lại cột để lấy mã. Đây là dữ liệu bí mật trong **bảng Registry riêng tư**, chỉ chủ tài khoản có quyền. Ẩn cột không thay thế quyền chia sẻ riêng tư. Có thể xóa ô token sau khi cất vào trình quản lý mật khẩu; API chỉ cần tokenHash trong Grants. Không chia sẻ Registry. Token cấp ban đầu hết hạn ngày 27/10/2027 UTC; có thể đổi hạn trong Grants. Ai giữ token có quyền tương ứng, nên cấp mỗi người một grant riêng.
 
 Chỉ chủ sở hữu/biên tập viên Registry được thêm, sửa hoặc thu hồi cấu hình qua Google Sheets hoặc plugin đã kết nối. API công khai chỉ hỗ trợ CRUD dữ liệu; không có endpoint quản trị. Các helper Apps Script có hậu tố `_`, không gọi được qua `google.script.run`.
 
