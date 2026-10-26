@@ -1,0 +1,16 @@
+# Tạo app HTML mới trên hệ thống chung
+
+Khi bắt đầu cuộc trò chuyện mới, cung cấp repository này và yêu cầu: “Tạo app HTML mới, tự tạo Google Sheets và kết nối hệ thống chung. Đọc NEW_APP.md trong repository trước khi làm.”
+
+1. Tìm Registry riêng tư bằng plugin Google Drive với tên chính xác `HTML Apps - Database Registry`, đọc metadata và xác minh đúng chủ tài khoản trước khi sửa. Đọc các tab Apps/Grants qua Google Sheets. Kiểm tra URL Web App hiện hành trong `docs/config.js` và DEPLOYMENT.md. Dùng lại đúng endpoint; không tạo thêm Apps Script.
+2. Chọn App ID duy nhất, dạng chữ thường/số/dấu gạch ngang, 3–64 ký tự. Tạo một Google Sheets riêng trong thư mục ChatGPT. Mỗi sheet con có hàng tiêu đề: `_id,_owner,_version,_createdAt,_updatedAt,_deleted`, sau đó các trường chuỗi. Tên trường phải bắt đầu bằng chữ thường, tiếp theo là chữ/số/gạch dưới, tối đa 40 ký tự. Không đặt dữ liệu vào Registry.
+3. Đọc lại metadata, headers và quyền chia sẻ. File dữ liệu và Registry giữ riêng tư. Tài khoản triển khai Apps Script cần quyền chỉnh sửa database mới.
+4. Thêm một dòng `Apps`: appId, name, spreadsheetId, sheetsUrl, githubUrl, appUrl, status=`active`, createdAt/updatedAt ISO, schemaJson, maxRows=`5000`, requestsPerMinute=`60`. Ví dụ schemaJson: `{"Tasks":["title","description","status"]}`. Không đưa Registry ID vào spreadsheetId của app.
+5. Sinh token 32 byte ngẫu nhiên bằng bộ sinh mật mã. Không dùng App ID, mật khẩu ngắn, UUID đơn lẻ hoặc chuỗi tự đặt làm token. Lưu SHA-256(token) dạng hex thường trong Grants với grantId duy nhất, appId, operations, sheets, status=`active`, expiresAt và scope=`own` hoặc `app`. Mỗi người một grantId; các token cùng grantId chia sẻ vùng dữ liệu. Mã truy cập chỉ giao qua nơi riêng tư như Access hoặc trình quản lý mật khẩu, không đưa vào chat báo cáo, GitHub, HTML, URL hoặc log.
+6. Tạo frontend theo yêu cầu. Dùng `docs/api-client.js`, cấu hình endpoint chung và App ID công khai. Cho nhập token lúc chạy. Render dữ liệu bằng textContent. Debounce và tuần tự hóa autosave; hiển thị lỗi, giữ nội dung khi lưu thất bại; sử dụng id/version, không dùng số hàng làm ID.
+7. Triển khai GitHub Pages từ repo của app. Không thay backend khi chỉ thêm app/schema chuỗi được hỗ trợ. Nếu sửa chức năng backend, cập nhật **deployment hiện có** sang version mới để giữ URL /exec.
+8. Kiểm tra thực: tạo trên giao diện → đọc lại đúng database bằng plugin → tải lại app → sửa → đọc lại Sheets → xóa → xác nhận không còn trong danh sách và `_deleted=true`. Kiểm tra token app A không dùng được với app B; sheet ngoài danh sách và spreadsheetId do client gửi phải bị từ chối. Kiểm tra hai app dùng cùng endpoint, dữ liệu độc lập. Không báo hoàn thành chỉ dựa trên unit test hoặc dữ liệu mẫu chèn trực tiếp.
+9. Cập nhật Registry appUrl/githubUrl/updatedAt và báo các link đã xác minh. Ghi kết quả kiểm tra thực, phần chưa làm và bước cần người dùng cấp quyền nếu có.
+
+Chủ tài khoản chỉ cần can thiệp khi Google yêu cầu đăng nhập/cấp quyền hoặc xác nhận bảo mật. Không yêu cầu họ tự viết mã, tạo database hay triển khai Apps Script riêng cho app mới.
+
