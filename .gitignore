@@ -1,0 +1,7 @@
+node_modules/
+*.private.*
+.clasprc.json
+.clasp.json
+.env*
+work/
+
