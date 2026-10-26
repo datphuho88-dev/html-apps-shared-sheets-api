@@ -1,6 +1,8 @@
 # Kết quả kiểm tra
 
-Chưa kiểm tra CRUD trên Web App thực tế. Việc tạo được Google Sheets và kiểm tra logic cục bộ không chứng minh triển khai hoạt động.
+Ngày 27/10/2026: 23 kiểm tra logic backend với Google services mô phỏng đã thành công. Đã đọc lại Registry và metadata bằng plugin, kiểm tra trực quan cả 3 tab Registry và Notes/Tags trong hai database. Cả 3 file đều riêng tư và chỉ chủ sở hữu có quyền. Hai App ID đã được đăng ký.
+
+GitHub xác nhận Pages đã xuất bản; giao diện Test Notes App tải được. Backend đang chờ chủ tài khoản bấm **Ủy quyền truy cập** tại Apps Script. Chưa kiểm tra CRUD trên Web App thực tế. Việc tạo được Google Sheets và kiểm tra logic cục bộ không chứng minh triển khai hoạt động.
 
 | Kiểm tra thực tế | Trạng thái |
 |---|---|
