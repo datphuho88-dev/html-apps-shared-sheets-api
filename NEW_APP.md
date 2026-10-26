@@ -1,6 +1,6 @@
 # Tạo app HTML mới trên hệ thống chung
 
-Khi bắt đầu cuộc trò chuyện mới, cung cấp repository này và yêu cầu: “Tạo app HTML mới, tự tạo Google Sheets và kết nối hệ thống chung. Đọc NEW_APP.md trong repository trước khi làm.”
+Mặc định thực hiện trọn quy trình theo `PROJECT_NOTES.md`: người dùng chỉ nêu yêu cầu app và nhận link kết quả, không tự thiết lập lại hệ thống. Khi bắt đầu cuộc trò chuyện mới, dùng repository đã gắn trong ngữ cảnh dự án; nếu không có ngữ cảnh, nhận link repository/ghi chú một lần để xác định đúng hệ thống. Không hứa tự nhớ cấu hình giữa các cuộc trò chuyện không có ngữ cảnh.
 
 1. Tìm Registry riêng tư bằng plugin Google Drive với tên chính xác `HTML Apps - Database Registry`, đọc metadata và xác minh đúng chủ tài khoản trước khi sửa. Đọc các tab Apps/Grants qua Google Sheets. Kiểm tra URL Web App hiện hành trong `docs/config.js` và DEPLOYMENT.md. Dùng lại đúng endpoint; không tạo thêm Apps Script.
 2. Chọn App ID duy nhất, dạng chữ thường/số/dấu gạch ngang, 3–64 ký tự. Tạo một Google Sheets riêng trong thư mục ChatGPT. Mỗi sheet con có hàng tiêu đề: `_id,_owner,_version,_createdAt,_updatedAt,_deleted`, sau đó các trường chuỗi. Tên trường phải bắt đầu bằng chữ thường, tiếp theo là chữ/số/gạch dưới, tối đa 40 ký tự. Không đặt dữ liệu vào Registry.
