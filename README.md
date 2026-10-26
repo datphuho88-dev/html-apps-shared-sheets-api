@@ -6,7 +6,7 @@ Một Apps Script Web App phục vụ nhiều app HTML trên GitHub Pages. Mỗi
 
 Tìm bảng riêng tư bằng Google Drive với tên chính xác `HTML Apps - Database Registry`. Liên kết database từng app nằm trong tab Apps. Tìm dự án Apps Script với tên `HTML Apps - Shared Google Sheets API`. ID các tài nguyên riêng tư không đưa vào repository công khai.
 
-URL Web App: đang chờ chủ tài khoản cấp quyền Google; xem DEPLOYMENT.md. Giao diện đã xuất bản tại https://datphuho88-dev.github.io/html-apps-shared-sheets-api/ nhưng chưa kết nối dữ liệu.
+Web App đã hoạt động; xem URL trong DEPLOYMENT.md và docs/config.js. App mới đã thử thực tế: https://datphuho88-dev.github.io/html-apps-shared-sheets-api/?app=ghi-chu-nhanh&v=20261027b. Đã tạo, đọc lại sau khi đóng/mở, sửa và xóa qua giao diện, đối chiếu Google Sheets riêng.
 
 ## Thư mục
 
