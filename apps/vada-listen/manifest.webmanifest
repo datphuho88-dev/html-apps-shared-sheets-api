@@ -1,0 +1,17 @@
+{
+  "name": "VADA Listen – Luyện nghe tiếng Trung",
+  "short_name": "VADA Listen",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#080a0b",
+  "theme_color": "#080a0b",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
