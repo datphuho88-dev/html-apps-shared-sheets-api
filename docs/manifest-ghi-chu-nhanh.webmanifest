@@ -1,0 +1,30 @@
+{
+  "id": "./?app=ghi-chu-nhanh",
+  "name": "Ghi chú nhanh",
+  "short_name": "Ghi chú nhanh",
+  "start_url": "./?app=ghi-chu-nhanh",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101b18",
+  "theme_color": "#167c68",
+  "icons": [
+    {
+      "src": "./icon-notes-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-notes-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-notes.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}
