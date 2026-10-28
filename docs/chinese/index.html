@@ -4,6 +4,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer"><meta name="theme-color" content="#f8fafc">
 <title>VADA Chinese • Học tiếng Trung</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231b6259'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='39' fill='white'%3E中%3C/text%3E%3C/svg%3E">
 <style>
 :root{font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#193331;background:#f4f7f5;font-synthesis:none;-webkit-tap-highlight-color:transparent}
@@ -86,4 +89,5 @@ h1{font-size:clamp(27px,6vw,42px);line-height:1.13;letter-spacing:-1.15px;margin
  <div id="editorStatus" class="notice" role="status"></div><div class="dialogActions"><button type="button" id="deleteCard" class="btn danger" hidden>Xóa</button><span class="grow"></span><button type="button" id="cancelCard" class="btn secondary">Hủy</button><button type="submit" id="saveCard" class="btn">Lưu vào Sheets</button></div>
 </form></dialog>
 <script type="module" src="./app.js?v=20261027a"></script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}</script>
 </body></html>
