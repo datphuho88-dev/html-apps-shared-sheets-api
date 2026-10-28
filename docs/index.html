@@ -4,6 +4,12 @@
  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
  <meta name="referrer" content="no-referrer"><meta name="color-scheme" content="dark">
  <title>Test Notes App</title>
+ <meta name="theme-color" content="#167c68">
+ <meta name="mobile-web-app-capable" content="yes">
+ <meta name="apple-mobile-web-app-capable" content="yes">
+ <link id="pwaManifest" rel="manifest" href="./manifest-test-notes.webmanifest">
+ <link rel="apple-touch-icon" href="./icon-notes-192.png">
+ <script>(function(){const app=new URLSearchParams(location.search).get('app')||'test-notes';const map={'test-notes':'manifest-test-notes.webmanifest','test-notes-2':'manifest-test-notes-2.webmanifest','ghi-chu-nhanh':'manifest-ghi-chu-nhanh.webmanifest'};const file=map[app]||map['test-notes'];document.getElementById('pwaManifest').href='./'+file;})();</script>
  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%238bbfab'/%3E%3Cpath d='M18 18h28v5H18zm0 12h28v5H18zm0 12h19v5H18z' fill='%23131a18'/%3E%3C/svg%3E">
  <link rel="stylesheet" href="style.css?v=20261027e">
 </head>
@@ -29,5 +35,6 @@
  </main>
  <dialog id="deleteDialog"><h2>Xóa ghi chú này?</h2><p>Ghi chú sẽ được ẩn khỏi danh sách. Quản trị viên vẫn có thể khôi phục trong Google Sheets.</p><div class="tools"><button class="quiet" id="cancelDelete">Giữ lại</button><button class="danger" id="confirmDelete">Xóa ghi chú</button></div></dialog>
  <script type="module" src="app.js?v=20261027b"></script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}</script>
 </body></html>
 
