@@ -1,40 +1,79 @@
 # VADA Listen — Luyện nghe tiếng Trung
 
-Ứng dụng HTML để ôn tập câu tiếng Trung đã học mỗi ngày.
+VADA Listen là ứng dụng web một trang để nhập bài học, luyện nghe câu tiếng Trung và theo dõi thời lượng nghe hằng ngày. Ứng dụng chạy trực tiếp trong trình duyệt, không cần tài khoản; dữ liệu học được lưu cục bộ trên thiết bị.
 
-## Phiên bản 1.5 (29/10/2026)
-- Màn hình nghe tối giản, hiển thị Hán + Pinyin, không lặp Pinyin.
-- **Giữ màn hình sáng khi nghe**: sử dụng Screen Wake Lock API; mặc định bật, chỉ giữ khi đang phát và trang hiển thị. Tự nhả khi tạm dừng/kết thúc hoặc rời tab, tự xin lại khi quay về. Tùy chọn trong Cài đặt một dòng; có thể hao pin hơn.
-- Import TXT, CSV, JSON, DOCX, hoặc dán trực tiếp văn bản.
-- Câu đã thuộc được lưu và có thể bỏ qua; câu khó được ưu tiên và có số lần lặp riêng.
-- Tốc độ, bản dịch tiếng Việt, lặp mặc định ngay trên màn hình nghe.
-- **Media Session cho điều khiển màn hình khóa** (hỗ trợ tùy thiết bị và trình duyệt):
-  - Nút **bài trước (◀)**: đặt câu đang phát là **đã thuộc**, tự bỏ qua nếu bật Bỏ qua câu đã thuộc.
-  - Nút **bài sau (▶)**: đặt câu đang phát là **cần học thêm**, ít nhất 5 lượt lặp trong lần học sau.
-  - Media play / pause hoạt động qua trình điều khiển media nếu Chrome hỗ trợ.
-  - Một âm báo xác nhận cho "Đã thuộc", hai âm báo cho "Cần học thêm".
-- Có nút bật/tắt điều khiển màn hình khóa trong Cài đặt.
+## Phiên bản 1.8 (29/10/2026)
 
-**Giới hạn quan trọng:** Chế độ giữ màn hình sáng không thể vượt qua thao tác bấm nút nguồn khóa thủ công; trình duyệt/hệ điều hành có thể từ chối Wake Lock (ví dụ khi tiết kiệm pin). Chrome/HTML không thể bắt nút tăng/giảm âm lượng vật lý khi khóa màn hình. Dù đã tích hợp Media Session và một audio element, Android/Chrome có thể tạm dừng Web Speech TTS khi khóa. Không cam kết phát nền liên tục; để đảm bảo cần APK Android dùng dịch vụ phát âm thanh nền hoặc phát bằng MP3/âm thanh đã tổng hợp trước.
+### Lịch luyện nghe theo ngày
+- Lịch tháng trên Trang chủ hiển thị trực tiếp tổng thời gian đã nghe trong từng ô ngày, thay cho dấu chấm trạng thái.
+- Chạm vào một ngày để xem tổng thời gian và danh sách các chủ đề đã nghe trong ngày đó.
+- Mỗi chủ đề trong phần chi tiết có thời lượng nghe riêng, sắp xếp từ nhiều đến ít.
+- Tổng thời gian của tháng được hiển thị ở đầu lịch.
+- Thời gian chỉ được cộng khi ứng dụng đang phát; mỗi nhịp ghi nhận được giới hạn để tránh cộng sai sau khi tab ngủ hoặc hệ thống tạm dừng.
+- Lịch nghe bắt đầu được ghi từ v1.5; không thể truy hồi thời lượng của các phiên bản cũ.
+- Lịch tổng và lịch theo chủ đề được lưu trong bản sao lưu JSON.
 
-## Quản lý chủ đề và lịch luyện nghe (v1.5)
-- Xóa một chủ đề cùng các câu trong chủ đề qua nút ✕, có xác nhận trước khi xóa.
-- Lịch tháng trên Trang chủ đánh dấu ngày có nghe và tổng số giây/phút ghi nhận được khi app đang phát.
-- Hiển thị ngày giờ nhập bài từ trường `created` của từng câu; chủ đề lấy thời gian sớm nhất.
-- Hai tùy chọn ẩn/hiện độc lập trong Cài đặt: lịch tháng và ngày giờ nhập bài.
-- Lịch nghe chỉ bắt đầu từ bản v1.5; không truy hồi được thời lượng nghe từ các phiên bản cũ.
-- Dữ liệu lịch nằm trong localStorage và được bao gồm trong file JSON sao lưu mới.
+### Nhập và quản lý bài học
+- Nhập bằng cách dán văn bản hoặc chọn file **TXT, CSV, JSON, DOCX**.
+- CSV hỗ trợ các cột phổ biến như `zh`/`chinese`, `pinyin`, `vi`/`vietnamese`, `topic`.
+- JSON nhận mảng câu trực tiếp hoặc đối tượng sao lưu có trường `sentences`.
+- DOCX được đọc trực tiếp trên thiết bị, không gửi file lên máy chủ.
+- Tự nhận diện câu có chữ Hán, gộp các dòng tiếng Trung trùng nhau và có thể nhận diện bản dịch tiếng Việt trong dữ liệu văn bản.
+- Gán tên chủ đề khi nhập; nếu để tên mặc định, ứng dụng lấy tên file làm chủ đề.
+- Hiển thị ngày giờ nhập bài từ trường `created`; thời gian của chủ đề lấy từ câu được nhập sớm nhất.
+- Có thể xóa từng câu hoặc xóa cả chủ đề. Xóa chủ đề luôn có hộp xác nhận và sẽ xóa toàn bộ câu thuộc chủ đề đó.
+- Nên xuất bản sao lưu JSON trước khi xóa số lượng lớn hoặc chuyển thiết bị.
 
-## Chạy app
-- Online: https://vada-chinese-listen.pages.dev
-- Mở `index.html` trong Chrome hỗ trợ Web Speech API.
-- Trong Cài đặt bật **Giữ màn hình sáng khi nghe** để tránh màn hình tự tắt (mặc định bật). Chế độ này tăng sử dụng pin.
-- Để sử dụng nút media, bật **Điều khiển khi khóa**.
-- Bấm **Phát**, sau đó khóa màn hình, mở bảng điều khiển media và thử ◀ / ▶.
-- Nếu không hiện bảng điều khiển media hoặc TTS dừng, bản Web chưa tương thích trên thiết bị; cân nhắc APK.
+### Ẩn/hiện thông tin
+- Bật/tắt độc lập lịch luyện nghe và ngày giờ nhập bài trong Cài đặt.
+- Chọn chế độ hiển thị Hán + Pinyin, chỉ Hán hoặc chỉ Pinyin khi nghe.
+- Có tùy chọn ẩn Pinyin trong thư viện.
+- Các tùy chọn hiển thị được lưu cùng dữ liệu cục bộ và trong bản sao lưu.
 
-## Lưu dữ liệu
-`localStorage` với khóa `vada-listen-v1`, giữ nguyên từ phiên bản cũ. Xuất JSON trước khi xóa dữ liệu Chrome hoặc đổi thiết bị.
+### Điều khiển nghe
+- Phát, tạm dừng, câu trước và câu tiếp theo.
+- Điều chỉnh tốc độ đọc, thời gian nghỉ, số lần lặp mặc định và số lần lặp riêng của câu khó.
+- Bật/tắt đọc bản dịch tiếng Việt.
+- Đánh dấu **Đã thuộc** hoặc **Cần học thêm**; câu cần học thêm được ưu tiên và có ít nhất 5 lượt lặp trong lần học sau.
+- Tùy chọn bỏ qua câu đã thuộc, trộn thứ tự và lặp lại danh sách.
+- Media Session hỗ trợ play/pause và nút bài trước/bài sau trên bảng điều khiển media nếu trình duyệt/thiết bị cho phép:
+  - **Bài trước (◀):** đánh dấu câu hiện tại là Đã thuộc.
+  - **Bài sau (▶):** đánh dấu câu hiện tại là Cần học thêm.
+  - Một âm báo xác nhận cho Đã thuộc, hai âm báo cho Cần học thêm.
+- Có công tắc riêng để bật/tắt điều khiển khi khóa màn hình.
 
-## Files
-- `index.html` — giao diện và chức năng web.
+### Giữ màn hình sáng (Wake Lock)
+- Screen Wake Lock được bật mặc định trong Cài đặt.
+- Chỉ giữ màn hình sáng khi đang phát và tab đang hiển thị.
+- Tự nhả khi tạm dừng, kết thúc hoặc rời tab; tự xin lại khi quay về và tiếp tục phát.
+- Có thể tắt bất kỳ lúc nào để tiết kiệm pin.
+
+## Giới hạn cần biết
+- Dữ liệu nằm trong `localStorage` của trình duyệt với khóa `vada-listen-v1`. Xóa dữ liệu trình duyệt, dùng chế độ riêng tư, đổi trình duyệt hoặc đổi thiết bị có thể làm mất dữ liệu nếu chưa xuất JSON.
+- Dung lượng thực tế phụ thuộc giới hạn `localStorage`, bộ nhớ và hiệu năng của từng trình duyệt; ứng dụng không đặt một số lượng câu cố định. File rất lớn có thể nhập chậm hoặc không lưu được.
+- DOCX cần trình duyệt hỗ trợ giải nén `deflate-raw` qua `DecompressionStream`. Một số file DOCX/kiểu nén có thể không đọc được; khi đó hãy xuất nội dung sang TXT, CSV hoặc JSON.
+- Web Speech TTS, giọng tiếng Trung/tiếng Việt, Media Session và Wake Lock phụ thuộc trình duyệt, hệ điều hành và thiết bị.
+- Wake Lock không thể vượt qua thao tác bấm nút nguồn để khóa thủ công và có thể bị từ chối khi hệ thống tiết kiệm pin.
+- Android/Chrome có thể tạm dừng Web Speech TTS khi khóa màn hình; bản web không cam kết phát nền liên tục.
+- Chrome/HTML không thể dùng nút tăng/giảm âm lượng vật lý để đánh dấu câu.
+- Thời lượng lịch chỉ phản ánh thời gian ứng dụng ghi nhận khi đang phát, không phải thời lượng âm thanh đã được xác minh bởi hệ điều hành.
+- Nếu cần phát nền ổn định khi khóa máy, nên dùng ứng dụng Android có dịch vụ âm thanh nền hoặc dùng file âm thanh đã tổng hợp trước.
+
+## Sao lưu và khôi phục
+- Trong Cài đặt, chọn **Sao lưu dữ liệu JSON** trước khi xóa dữ liệu trình duyệt hoặc đổi thiết bị.
+- Bản sao lưu gồm câu học, cài đặt, tổng thời gian theo ngày và thời gian theo từng chủ đề.
+- Import JSON sẽ thêm/gộp bài học; không tự động xóa dữ liệu đang có.
+
+## Chạy ứng dụng
+- Cloudflare Pages: https://vada-chinese-listen.pages.dev
+- Mã nguồn: https://github.com/datphuho88-dev/html-apps-shared-sheets-api/tree/main/apps/vada-listen
+- Hoặc mở `index.html` trong Chrome/Edge có Web Speech API.
+
+## Cấu trúc
+- `index.html` — toàn bộ giao diện và chức năng ứng dụng.
+- `manifest.webmanifest` — cấu hình cài đặt dạng PWA.
+- `icon.svg` — biểu tượng ứng dụng.
+- `README.md` — ghi chú tính năng và giới hạn của phiên bản hiện tại.
+
+## Nguyên tắc dữ liệu
+Bản v1.8 tiếp tục dùng khóa `vada-listen-v1` và giữ tương thích với dữ liệu cũ. Việc cập nhật hoặc triển khai mã không đọc, thay đổi hay xóa dữ liệu học đang lưu trên thiết bị của người dùng.
