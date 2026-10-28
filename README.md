@@ -53,3 +53,14 @@ Giới hạn 60 yêu cầu/phút/grant dùng CacheService và ScriptLock. Cache 
 
 Tài liệu chính thức: [Web Apps](https://developers.google.com/apps-script/guides/web), [Content Service](https://developers.google.com/apps-script/guides/content), [Quotas](https://developers.google.com/apps-script/guides/services/quotas). Không giả định quota là cố định.
 
+
+## Cài web app lên màn hình chính Chrome
+
+Các ứng dụng GitHub Pages dùng PWA trực tiếp, không có thanh bọc trên/dưới, không thay đổi API Google Sheets:
+
+- [Ghi chú nhanh](https://datphuho88-dev.github.io/html-apps-shared-sheets-api/?app=ghi-chu-nhanh)
+- [Test Notes App](https://datphuho88-dev.github.io/html-apps-shared-sheets-api/?app=test-notes)
+- [Test Notes App 2](https://datphuho88-dev.github.io/html-apps-shared-sheets-api/?app=test-notes-2)
+- [VADA Chinese](https://datphuho88-dev.github.io/html-apps-shared-sheets-api/chinese/)
+
+Mỗi app có manifest và icons PNG 192/512. Notes chọn manifest theo tham số app, nên mỗi bản cài lại đúng App ID khi mở. Service worker chỉ cache phần giao diện; dữ liệu Google Sheets vẫn cần mạng và token riêng. VADA Listen đã có PWA trên Cloudflare Pages: https://vada-chinese-listen.pages.dev.
