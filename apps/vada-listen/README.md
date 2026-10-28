@@ -1,30 +1,30 @@
 # VADA Listen — Luyện nghe tiếng Trung
 
-Ứng dụng HTML độc lập để ôn tập câu tiếng Trung đã học hằng ngày.
+Ứng dụng HTML để ôn tập câu tiếng Trung đã học mỗi ngày.
 
-## Phiên bản
+## Phiên bản 1.3 (29/10/2026)
+- Màn hình nghe tối giản, hiển thị Hán + Pinyin, không lặp Pinyin.
+- Import TXT, CSV, JSON, DOCX, hoặc dán trực tiếp văn bản.
+- Câu đã thuộc được lưu và có thể bỏ qua; câu khó được ưu tiên và có số lần lặp riêng.
+- Tốc độ, bản dịch tiếng Việt, lặp mặc định ngay trên màn hình nghe.
+- **Media Session cho điều khiển màn hình khóa** (hỗ trợ tùy thiết bị và trình duyệt):
+  - Nút **bài trước (◀)**: đặt câu đang phát là **đã thuộc**, tự bỏ qua nếu bật Bỏ qua câu đã thuộc.
+  - Nút **bài sau (▶)**: đặt câu đang phát là **cần học thêm**, ít nhất 5 lượt lặp trong lần học sau.
+  - Media play / pause hoạt động qua trình điều khiển media nếu Chrome hỗ trợ.
+  - Một âm báo xác nhận cho "Đã thuộc", hai âm báo cho "Cần học thêm".
+- Có nút bật/tắt điều khiển màn hình khóa trong Cài đặt.
 
-- v1.2 (29/10/2026)
-- Giao diện tối giản cho điện thoại
-- Chữ Hán, Pinyin, bản dịch tiếng Việt; chỉ hiển thị một lần Pinyin
-- Phát theo số lần lặp mặc định, cho phép lặp riêng từng câu
-- Đánh dấu câu đã thuộc để bỏ qua, đánh dấu câu khó
-- Điều chỉnh tốc độ và bật/tắt dịch ngay tại màn hình nghe
-- Nhập bài từ TXT, CSV, JSON, DOCX hoặc dán văn bản
-- Lưu dữ liệu học bằng localStorage của trình duyệt; chưa đồng bộ tài khoản
+**Giới hạn quan trọng:** Chrome/HTML không thể bắt nút tăng/giảm âm lượng vật lý khi khóa màn hình. Dù đã tích hợp Media Session và một audio element, Android/Chrome có thể tạm dừng Web Speech TTS khi khóa. Không cam kết phát nền liên tục; để đảm bảo cần APK Android dùng dịch vụ phát âm thanh nền hoặc phát bằng MP3/âm thanh đã tổng hợp trước.
 
 ## Chạy app
+- Online: https://vada-chinese-listen.pages.dev
+- Mở `index.html` trong Chrome hỗ trợ Web Speech API.
+- Trong Cài đặt bật **Điều khiển khi khóa**.
+- Bấm **Phát**, sau đó khóa màn hình, mở bảng điều khiển media và thử ◀ / ▶.
+- Nếu không hiện bảng điều khiển media hoặc TTS dừng, bản Web chưa tương thích trên thiết bị; cân nhắc APK.
 
-Mở `index.html` trong trình duyệt hỗ trợ Web Speech API hoặc truy cập:
+## Lưu dữ liệu
+`localStorage` với khóa `vada-listen-v1`, giữ nguyên từ phiên bản cũ. Xuất JSON trước khi xóa dữ liệu Chrome hoặc đổi thiết bị.
 
-https://vada-chinese-listen.pages.dev
-
-Chất lượng và khả năng phát âm khi khóa màn hình phụ thuộc vào giọng TTS và trình duyệt trên thiết bị.
-
-## Cấu trúc
-
-- `index.html`: toàn bộ mã giao diện và xử lý app.
-
-## Lưu ý
-
-Đây là mã nguồn app, không chứa dữ liệu học cá nhân đang lưu trong trình duyệt. Sao lưu/nhập lại dữ liệu từ app nếu chuyển điện thoại hoặc xóa dữ liệu trình duyệt.
+## Files
+- `index.html` — giao diện và chức năng web.
