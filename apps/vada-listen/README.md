@@ -88,3 +88,13 @@ Bản v1.8 tiếp tục dùng khóa `vada-listen-v1` và giữ tương thích v�
 - Khi không cấu hình hoặc giọng AI lỗi, tự dùng TTS Android. TTS Android phụ thuộc máy và không được đảm bảo ngắt nghỉ chính xác như Azure.
 - API cần internet và có thể phát sinh phí Azure. Khi triển khai công khai nên bổ sung bảo vệ quota / rate limit tại Cloudflare.
 - Dữ liệu câu đã học giữ nguyên ở trình duyệt qua khóa localStorage cũ.
+
+## Gemini TTS (cập nhật 30/10/2026)
+
+- Luồng AI chính đã chuyển từ Azure Speech sang **Gemini TTS**.
+- Frontend gọi `POST /api/tts`; backend Cloudflare giữ `GEMINI_API_KEY` ở secret, không đưa key vào HTML/GitHub/localStorage.
+- Endpoint `GET /api/tts-status` cho biết AI đã được cấu hình hay chưa.
+- Model cấu hình: `gemini-3.8-flash-lite-tts`; tiếng Trung và tiếng Việt dùng giọng AI riêng và prompt yêu cầu đọc đúng nguyên văn, ngắt nghỉ theo dấu câu.
+- Khi thiếu key hoặc Gemini lỗi, app tự dùng Android Web Speech như trước.
+- Tùy chỉnh nghỉ ở dấu phẩy vẫn được giữ.
+- Trạng thái hiện tại: mã và Cloudflare worker đã deploy; cần thêm secret `GEMINI_API_KEY` trong Cloudflare production để AI hoạt động thật.
