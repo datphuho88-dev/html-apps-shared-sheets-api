@@ -90,3 +90,13 @@ Bản v1.8 tiếp tục dùng khóa `vada-listen-v1` và giữ tương thích v�
 - Tùy chỉnh nghỉ ở dấu phẩy vẫn được giữ.
 - Trạng thái production ngày 30/10/2026: secret `GEMINI_API_KEY` đã được thêm và `/api/tts-status` trả `enabled:true`.
 - Kiểm thử thực tế từ Cloudflare hiện bị Google từ chối với lỗi khu vực `User location is not supported for the API use`, dù Việt Nam nằm trong danh sách khu vực được hỗ trợ. Đây là lỗi phân loại IP đầu ra của hạ tầng; app tiếp tục tự dùng Android TTS cho đến khi Google/Cloudflare xử lý hoặc backend được chuyển sang một IP được Google chấp nhận.
+
+## Azure Xiaoxiao (cập nhật 30/10/2026)
+
+- App có 3 chế độ giọng đọc: **Android**, **Gemini AI**, **Azure Xiaoxiao**.
+- Azure dùng giọng Mandarin `zh-CN-XiaoxiaoNeural`; phần dịch tiếng Việt dùng `vi-VN-HoaiMyNeural`.
+- Backend Cloudflare chọn provider theo cài đặt của app và gọi Azure Speech REST bằng SSML để điều khiển tốc độ/ngắt nghỉ.
+- Azure yêu cầu hai secret production: `AZURE_SPEECH_KEY` và `AZURE_SPEECH_REGION`.
+- Không lưu khóa Azure trong HTML, GitHub hoặc localStorage.
+- Nếu Azure chưa cấu hình hoặc lỗi, app tự fallback về Android TTS.
+- Gemini vẫn hoạt động độc lập khi `GEMINI_API_KEY` có sẵn.
