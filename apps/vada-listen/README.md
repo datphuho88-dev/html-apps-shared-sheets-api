@@ -79,22 +79,14 @@ VADA Listen là ứng dụng web một trang để nhập bài học, luyện ng
 Bản v1.8 tiếp tục dùng khóa `vada-listen-v1` và giữ tương thích với dữ liệu cũ. Việc cập nhật hoặc triển khai mã không đọc, thay đổi hay xóa dữ liệu học đang lưu trên thiết bị của người dùng.
 
 
-## Giọng đọc AI (cập nhật 30/10/2026)
-
-- Trong Cài đặt có **Giọng đọc → Android / AI tự nhiên**, và tùy chỉnh khoảng nghỉ tại dấu phẩy.
-- Có tích hợp máy khách gọi `POST /api/tts` và kiểm tra trạng thái qua `GET /api/tts-status`.
-- Backend đang triển khai trên Cloudflare Pages Functions Worker, dùng Azure Speech Neural Voice: `zh-CN-XiaoxiaoNeural` và `vi-VN-HoaiMyNeural`, SSML để kiểm soát ngắt nghỉ.
-- **Chưa hoạt động AI** nếu chưa gắn hai environment secret `AZURE_SPEECH_KEY` và `AZURE_SPEECH_REGION` trên Cloudflare Pages production. Không ghi khóa vào GitHub, HTML hoặc localStorage.
-- Khi không cấu hình hoặc giọng AI lỗi, tự dùng TTS Android. TTS Android phụ thuộc máy và không được đảm bảo ngắt nghỉ chính xác như Azure.
-- API cần internet và có thể phát sinh phí Azure. Khi triển khai công khai nên bổ sung bảo vệ quota / rate limit tại Cloudflare.
-- Dữ liệu câu đã học giữ nguyên ở trình duyệt qua khóa localStorage cũ.
-
 ## Gemini TTS (cập nhật 30/10/2026)
 
 - Luồng AI chính đã chuyển từ Azure Speech sang **Gemini TTS**.
 - Frontend gọi `POST /api/tts`; backend Cloudflare giữ `GEMINI_API_KEY` ở secret, không đưa key vào HTML/GitHub/localStorage.
 - Endpoint `GET /api/tts-status` cho biết AI đã được cấu hình hay chưa.
 - Model cấu hình: `gemini-3.8-flash-lite-tts`; tiếng Trung và tiếng Việt dùng giọng AI riêng và prompt yêu cầu đọc đúng nguyên văn, ngắt nghỉ theo dấu câu.
+- Mã Pages Functions nằm trong `functions/api/tts.js` và `functions/api/tts-status.js` để backend có thể được kiểm tra, tái triển khai và đồng bộ cùng frontend.
 - Khi thiếu key hoặc Gemini lỗi, app tự dùng Android Web Speech như trước.
 - Tùy chỉnh nghỉ ở dấu phẩy vẫn được giữ.
-- Trạng thái hiện tại: mã và Cloudflare worker đã deploy; cần thêm secret `GEMINI_API_KEY` trong Cloudflare production để AI hoạt động thật.
+- Trạng thái production ngày 30/10/2026: secret `GEMINI_API_KEY` đã được thêm và `/api/tts-status` trả `enabled:true`.
+- Kiểm thử thực tế từ Cloudflare hiện bị Google từ chối với lỗi khu vực `User location is not supported for the API use`, dù Việt Nam nằm trong danh sách khu vực được hỗ trợ. Đây là lỗi phân loại IP đầu ra của hạ tầng; app tiếp tục tự dùng Android TTS cho đến khi Google/Cloudflare xử lý hoặc backend được chuyển sang một IP được Google chấp nhận.
