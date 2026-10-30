@@ -77,3 +77,14 @@ VADA Listen là ứng dụng web một trang để nhập bài học, luyện ng
 
 ## Nguyên tắc dữ liệu
 Bản v1.8 tiếp tục dùng khóa `vada-listen-v1` và giữ tương thích với dữ liệu cũ. Việc cập nhật hoặc triển khai mã không đọc, thay đổi hay xóa dữ liệu học đang lưu trên thiết bị của người dùng.
+
+
+## Giọng đọc AI (cập nhật 30/10/2026)
+
+- Trong Cài đặt có **Giọng đọc → Android / AI tự nhiên**, và tùy chỉnh khoảng nghỉ tại dấu phẩy.
+- Có tích hợp máy khách gọi `POST /api/tts` và kiểm tra trạng thái qua `GET /api/tts-status`.
+- Backend đang triển khai trên Cloudflare Pages Functions Worker, dùng Azure Speech Neural Voice: `zh-CN-XiaoxiaoNeural` và `vi-VN-HoaiMyNeural`, SSML để kiểm soát ngắt nghỉ.
+- **Chưa hoạt động AI** nếu chưa gắn hai environment secret `AZURE_SPEECH_KEY` và `AZURE_SPEECH_REGION` trên Cloudflare Pages production. Không ghi khóa vào GitHub, HTML hoặc localStorage.
+- Khi không cấu hình hoặc giọng AI lỗi, tự dùng TTS Android. TTS Android phụ thuộc máy và không được đảm bảo ngắt nghỉ chính xác như Azure.
+- API cần internet và có thể phát sinh phí Azure. Khi triển khai công khai nên bổ sung bảo vệ quota / rate limit tại Cloudflare.
+- Dữ liệu câu đã học giữ nguyên ở trình duyệt qua khóa localStorage cũ.
