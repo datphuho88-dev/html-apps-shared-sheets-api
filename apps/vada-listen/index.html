@@ -275,7 +275,7 @@ function signalAudioFeedback(kind){
     }
   }catch(e){}
 }
-/* VADA v1.3: Media Session and lock-screen actions (Chrome support varies).
+/* VADA v1.9: Media Session for lock screen / car controls (Chrome and Android Auto support varies).
    No interception of the hardware volume keys: browsers cannot receive those events while locked. */
 const mediaAnchor=document.getElementById('backgroundAudio');
 let bgAudioUrl='';
@@ -348,7 +348,7 @@ function updateMediaSession(){
   try{
     const s=current();
     if(window.MediaMetadata&&s){navigator.mediaSession.metadata=new MediaMetadata({
-      title:s.zh,artist:'◀ Đã thuộc  ·  ▶ Cần học thêm',album:'VADA Listen · '+(s.topic||'Luyện nghe')
+      title:s.zh,artist:'⏮ Câu trước  ·  ⏭ Câu tiếp theo',album:'VADA Listen · '+(s.topic||'Luyện nghe')
     })}
     navigator.mediaSession.playbackState=speaking?'playing':'paused';
   }catch(e){/* Media Session may be unsupported in embedded browser */}
@@ -372,14 +372,31 @@ function mediaMark(kind){
   if(active&&current()){startPlayback()}
   else updateMediaSession();
 }
+function mediaSkip(direction){
+  if(!queue.length)return;
+  const active=speaking;
+  stopSpeech();
+  if(direction>0){
+    if(queueIndex<queue.length-1)queueIndex++;
+    else if(settings.loop)queueIndex=0;
+    else {queueIndex=queue.length-1;toast('Đã đến câu cuối');renderPlayer();updateMediaSession();return;}
+  }else{
+    if(queueIndex>0)queueIndex--;
+    else if(settings.loop)queueIndex=queue.length-1;
+    else {queueIndex=0;toast('Đang ở câu đầu');renderPlayer();updateMediaSession();return;}
+  }
+  renderPlayer();
+  updateMediaSession();
+  if(active&&current())startPlayback();
+}
 function setupMediaSession(){
   if(!('mediaSession' in navigator))return;
   const actions={
     play:()=>{if(!speaking&&current())startPlayback()},
     pause:()=>{if(speaking)stopSpeech()},
     stop:()=>stopSpeech(),
-    previoustrack:()=>{if(settings.lockControl)mediaMark('known')},
-    nexttrack:()=>{if(settings.lockControl)mediaMark('hard')}
+    previoustrack:()=>{if(settings.lockControl)mediaSkip(-1)},
+    nexttrack:()=>{if(settings.lockControl)mediaSkip(1)}
   };
   Object.entries(actions).forEach(([type,handler])=>{
     try{navigator.mediaSession.setActionHandler(type,handler)}catch(e){}
