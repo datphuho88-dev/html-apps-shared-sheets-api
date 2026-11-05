@@ -72,7 +72,7 @@ body.is-player .top,body.is-player .nav{display:none!important}
 <body><div class="app">
 
 <main>
-<section id="home" class="screen active page"><div class="app-version">VADA Listen · v1.13</div><div id="stats" class="stats"></div><div class="home-sync"><button onclick="syncNow(true)">↻ Đồng bộ ngay</button><small id="homeSyncStatus">Chưa đồng bộ phiên này</small></div><button class="cta" onclick="playChosenTopics()"><span><strong>▶ Bắt đầu luyện nghe</strong><small id="ctaInfo">Nghe các câu chưa thuộc</small></span><span style="font-size:24px">›</span></button><div class="section-head"><h2>Chủ đề của tôi</h2><button class="link" onclick="openModal('importModal')">+ Nhập bài</button></div><div class="topic-tools"><button onclick="selectAllTopics()">Chọn tất cả</button><button onclick="clearTopicSelection()">Bỏ chọn</button><button onclick="playChosenTopics()">▶ Nghe đã chọn</button><button onclick="editSelectedTopic()">✎ Sửa</button><button onclick="deleteSelectedTopics()">✕ Xóa đã chọn</button><small id="selectionCount">Chưa chọn chủ đề</small></div><div id="topics"></div><div id="calendarSection" class="calendar-section"><div class="section-head"><h2>Lịch luyện nghe</h2><span class="muted" id="calendarTotal"></span></div><div class="cal-head"><button onclick="changeCalendar(-1)" aria-label="Tháng trước">‹</button><strong id="calendarTitle"></strong><button onclick="changeCalendar(1)" aria-label="Tháng sau">›</button></div><div class="calendar-grid" id="calendarGrid"></div><p class="help" id="calendarDetail">Chạm ngày để xem thời gian nghe.</p></div><div class="section-head"><h2>Ôn tập ưu tiên</h2><button class="link" onclick="showScreen('library');setFilter('hard')">Xem tất cả</button></div><div id="homePriority"></div></section>
+<section id="home" class="screen active page"><div class="app-version">VADA Listen · v1.14</div><div id="stats" class="stats"></div><div class="home-sync"><button onclick="syncNow(true)">↻ Đồng bộ ngay</button><small id="homeSyncStatus">Chưa đồng bộ phiên này</small></div><button class="cta" onclick="playChosenTopics()"><span><strong>▶ Bắt đầu luyện nghe</strong><small id="ctaInfo">Nghe các câu chưa thuộc</small></span><span style="font-size:24px">›</span></button><div class="section-head"><h2>Chủ đề của tôi</h2><button class="link" onclick="openModal('importModal')">+ Nhập bài</button></div><div class="topic-tools"><button onclick="selectAllTopics()">Chọn tất cả</button><button onclick="clearTopicSelection()">Bỏ chọn</button><button onclick="playChosenTopics()">▶ Nghe đã chọn</button><button onclick="editSelectedTopic()">✎ Sửa</button><button onclick="deleteSelectedTopics()">✕ Xóa đã chọn</button><small id="selectionCount">Chưa chọn chủ đề</small></div><div id="topics"></div><div id="calendarSection" class="calendar-section"><div class="section-head"><h2>Lịch luyện nghe</h2><span class="muted" id="calendarTotal"></span></div><div class="cal-head"><button onclick="changeCalendar(-1)" aria-label="Tháng trước">‹</button><strong id="calendarTitle"></strong><button onclick="changeCalendar(1)" aria-label="Tháng sau">›</button></div><div class="calendar-grid" id="calendarGrid"></div><p class="help" id="calendarDetail">Chạm ngày để xem thời gian nghe.</p></div><div class="section-head"><h2>Ôn tập ưu tiên</h2><button class="link" onclick="showScreen('library');setFilter('hard')">Xem tất cả</button></div><div id="homePriority"></div></section>
 <section id="player" class="screen page" style="padding-top:0">
   <div class="player-head">
     <button class="head-icon" onclick="showScreen('home')" title="Quay lại" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -176,7 +176,7 @@ function sentenceFromCloud(r){let d=r.data||{};return {id:r.id,zh:d.zh||'',py:d.
 function historyRecordId(day){return 'history-'+String(day).replace(/-/g,'')+'-vada'}
 function historyPayload(day){return JSON.stringify({total:Number(listenHistory[day])||0,topics:topicListenHistory[day]||{}})}
 function applyHistoryRecord(r){try{let d=r.data||{},p=JSON.parse(d.seconds||'{}'),day=d.day;if(!day)return;listenHistory[day]=Number(p.total)||0;topicListenHistory[day]=p.topics&&typeof p.topics==='object'?p.topics:{};historyUpdatedAt[day]=Date.parse(r.updatedAt)||Date.now()}catch(e){}}
-async function pacedCreate(sheet,id,data){let x=await cloudCall('create',sheet,{id,data});await wait(520);return x}
+async function pacedCreate(sheet,id,data){try{let x=await cloudCall('create',sheet,{id,data});await wait(520);return x}catch(e){if(!/ID đã tồn tại|already exists/i.test(String(e.message||'')))throw e;const rows=await cloudList(sheet);const existing=rows.find(r=>r.id===id);if(!existing)throw Error('ID '+id+' đã tồn tại nhưng chưa thể đọc bản ghi theo quyền hiện tại; không ghi đè.');return {record:existing,replayed:true}}}
 async function connectGoogleSync(){let v=String($('syncTokenInput')?.value||'').trim();if(!/^[A-Za-z0-9_-]{43}$/.test(v)){toast('Mã đồng bộ chưa đúng');return}if(v!==syncToken)localStorage.removeItem(SYNC_INIT_KEY);syncToken=v;localStorage.setItem(SYNC_TOKEN_KEY,v);await syncNow(true)}
 function disconnectGoogleSync(){syncToken='';localStorage.removeItem(SYNC_TOKEN_KEY);localStorage.removeItem(SYNC_INIT_KEY);clearTimeout(syncTimer);setSyncStatus('Đã ngắt Google Sheets. Dữ liệu trên máy vẫn được giữ.',false);toast('Đã ngắt đồng bộ trên thiết bị này')}
 async function syncNow(manual=false){
@@ -187,24 +187,46 @@ async function syncNow(manual=false){
   const initialized=localStorage.getItem(SYNC_INIT_KEY)==='1';
   syncApplying=true;
   if(!initialized){
+    // Never replace local learning data with a partial remote bootstrap.
     const activeRemote=remoteSent.filter(r=>String(r.data?.deleted)!=='true');
-    const remoteReady=remoteSettings.some(r=>r.data?.key==='all');
-    if(remoteReady){
-      sentences=activeRemote.map(sentenceFromCloud);
-      const sr=remoteSettings.find(r=>r.data?.key==='all');
-      if(sr){try{settings={...defaultSettings,...JSON.parse(sr.data.value||'{}')};settingsUpdatedAt=Date.parse(sr.updatedAt)||Date.now();settingsLastSerialized=JSON.stringify(settings)}catch(e){}}
-      listenHistory={};topicListenHistory={};historyUpdatedAt={};remoteHistory.forEach(applyHistoryRecord);
-      syncDeletedIds=[];
-    }else{
-      // Settings is the bootstrap completion marker because it is written only after all
-      // sentences. If it is missing, keep local-only records and finish an interrupted upload.
-      const rmap=new Map(activeRemote.map(r=>[r.id,r]));
-      sentences=sentences.map(s=>rmap.has(s.id)?sentenceFromCloud(rmap.get(s.id)):s);
-      const localIds=new Set(sentences.map(s=>s.id));
-      for(const r of activeRemote)if(!localIds.has(r.id)){sentences.push(sentenceFromCloud(r));localIds.add(r.id)}
-      for(const s of sentences){let x=await pacedCreate('Sentences',s.id,cloudSentenceData(s));s._cloudVersion=x.record.version;s.updated=Date.parse(x.record.updatedAt)||Date.now()}
-      let sr=await pacedCreate('Settings','settings-main-vada-listen',{key:'all',value:JSON.stringify(settings)});settingsUpdatedAt=Date.parse(sr.record.updatedAt)||Date.now();
-      for(const day of Object.keys(listenHistory)){let hr=await pacedCreate('History',historyRecordId(day),{day,topic:'__all__',seconds:historyPayload(day)});historyUpdatedAt[day]=Date.parse(hr.record.updatedAt)||Date.now()}
+    const remoteMap=new Map(activeRemote.map(r=>[r.id,r]));
+    const localMap=new Map(sentences.map(s=>[s.id,s]));
+    for(const r of activeRemote){
+      if(!localMap.has(r.id)){const item=sentenceFromCloud(r);sentences.push(item);localMap.set(r.id,item)}
+      else {
+        const local=localMap.get(r.id),rt=Date.parse(r.updatedAt)||0,lt=Number(local.updated||local.created)||0;
+        if(rt>lt+1500)Object.assign(local,sentenceFromCloud(r));
+      }
+    }
+    // Bootstrap may be interrupted. Resume only missing IDs, never blindly CREATE existing IDs.
+    for(const s of sentences){
+      const old=remoteMap.get(s.id);
+      if(old){
+        s._cloudVersion=Number(old.version)||1;
+        continue;
+      }
+      const x=await pacedCreate('Sentences',s.id,cloudSentenceData(s));
+      s._cloudVersion=x.record.version;
+      if(!x.replayed)s.updated=Date.parse(x.record.updatedAt)||Date.now();
+    }
+    const sr=remoteSettings.find(r=>r.data?.key==='all');
+    if(!sr){
+      const x=await pacedCreate('Settings','settings-main-vada-listen',{key:'all',value:JSON.stringify(settings)});
+      settingsUpdatedAt=Date.parse(x.record.updatedAt)||Date.now();
+    } else {
+      // Do not overwrite local preferences just because the remote bootstrap marker exists.
+      settingsUpdatedAt=Math.max(settingsUpdatedAt,Date.parse(sr.updatedAt)||0);
+    }
+    const historyMap=new Map(remoteHistory.map(r=>[r.data?.day,r]));
+    for(const r of remoteHistory){
+      const day=r.data?.day;
+      if(day&&!Object.prototype.hasOwnProperty.call(listenHistory,day))applyHistoryRecord(r);
+    }
+    for(const day of Object.keys(listenHistory)){
+      if(historyMap.has(day))continue;
+      const x=await pacedCreate('History',historyRecordId(day),{day,topic:'__all__',seconds:historyPayload(day)});
+      if(x.replayed)applyHistoryRecord(x.record);
+      else historyUpdatedAt[day]=Date.parse(x.record.updatedAt)||Date.now();
     }
     localStorage.setItem(SYNC_INIT_KEY,'1');
   }else{
@@ -227,11 +249,11 @@ async function syncNow(manual=false){
     const freshRemoteIds=new Set(remoteSent.map(r=>r.id));
     for(const s of sentences){if(!freshRemoteIds.has(s.id)&&!syncDeletedIds.includes(s.id)){let x=await pacedCreate('Sentences',s.id,cloudSentenceData(s));s._cloudVersion=x.record.version;s.updated=Date.parse(x.record.updatedAt)||Date.now()}}
     const sr=remoteSettings.find(r=>r.data?.key==='all');
-    if(!sr){let x=await cloudCall('create','Settings',{id:'settings-main-vada-listen',data:{key:'all',value:JSON.stringify(settings)}});settingsUpdatedAt=Date.parse(x.record.updatedAt)||Date.now()}
+    if(!sr){let x=await pacedCreate('Settings','settings-main-vada-listen',{key:'all',value:JSON.stringify(settings)});settingsUpdatedAt=Date.parse(x.record.updatedAt)||Date.now()}
     else {let rt=Date.parse(sr.updatedAt)||0;if(settingsUpdatedAt>rt+1500){let x=await cloudCall('update','Settings',{id:sr.id,version:sr.version,data:{key:'all',value:JSON.stringify(settings)}});settingsUpdatedAt=Date.parse(x.record.updatedAt)||Date.now()}else if(rt>settingsUpdatedAt+1500){try{settings={...defaultSettings,...JSON.parse(sr.data.value||'{}')};settingsUpdatedAt=rt;settingsLastSerialized=JSON.stringify(settings)}catch(e){}}}
     const hrmap=new Map(remoteHistory.map(r=>[r.data?.day,r]));
     const days=new Set([...Object.keys(listenHistory),...remoteHistory.map(r=>r.data?.day).filter(Boolean)]);
-    for(const day of days){let r=hrmap.get(day),lt=Number(historyUpdatedAt[day])||0,rt=r?(Date.parse(r.updatedAt)||0):0;if(!r){let x=await cloudCall('create','History',{id:historyRecordId(day),data:{day,topic:'__all__',seconds:historyPayload(day)}});historyUpdatedAt[day]=Date.parse(x.record.updatedAt)||Date.now();await wait(520)}else if(lt>rt+1500){let x=await cloudCall('update','History',{id:r.id,version:r.version,data:{day,topic:'__all__',seconds:historyPayload(day)}});historyUpdatedAt[day]=Date.parse(x.record.updatedAt)||Date.now();await wait(520)}else if(rt>lt+1500)applyHistoryRecord(r)}
+    for(const day of days){let r=hrmap.get(day),lt=Number(historyUpdatedAt[day])||0,rt=r?(Date.parse(r.updatedAt)||0):0;if(!r){let x=await pacedCreate('History',historyRecordId(day),{day,topic:'__all__',seconds:historyPayload(day)});historyUpdatedAt[day]=Date.parse(x.record.updatedAt)||Date.now();await wait(520)}else if(lt>rt+1500){let x=await cloudCall('update','History',{id:r.id,version:r.version,data:{day,topic:'__all__',seconds:historyPayload(day)}});historyUpdatedAt[day]=Date.parse(x.record.updatedAt)||Date.now();await wait(520)}else if(rt>lt+1500)applyHistoryRecord(r)}
   }
   buildQueue(current()?.id);save();renderHome();renderLibrary();if(currentScreen==='settings')renderSettings();setSyncStatus('Đã đồng bộ Google Sheets · '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),true);if(manual)toast('Đồng bộ Google Sheets hoàn tất');
  }catch(e){setSyncStatus('Lỗi đồng bộ: '+(e.message||e),false);if(manual)toast('Không đồng bộ được: '+(e.message||e))}
