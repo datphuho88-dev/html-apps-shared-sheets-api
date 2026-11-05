@@ -78,6 +78,12 @@ VADA Listen là ứng dụng web một trang để nhập bài học, luyện ng
 ## Nguyên tắc dữ liệu
 Bản v1.8 tiếp tục dùng khóa `vada-listen-v1` và giữ tương thích với dữ liệu cũ. Việc cập nhật hoặc triển khai mã không đọc, thay đổi hay xóa dữ liệu học đang lưu trên thiết bị của người dùng.
 
+## Đồng bộ Google Sheets (v1.12)
+
+- Dùng chung câu học, trạng thái đã thuộc/câu khó, cài đặt và lịch nghe trên nhiều thiết bị.
+- Dữ liệu vẫn được lưu cục bộ để app hoạt động khi mất mạng và tự đồng bộ lại khi có kết nối.
+- Bản ghi `Settings` là dấu xác nhận lần tải dữ liệu đầu tiên đã hoàn tất. Nếu kết nối bị ngắt trước bước này, app giữ dữ liệu cục bộ và tiếp tục tải phần còn thiếu, tránh thay thế dữ liệu bằng một bản Sheet chưa đầy đủ.
+
 
 ## Gemini TTS (cập nhật 30/10/2026)
 

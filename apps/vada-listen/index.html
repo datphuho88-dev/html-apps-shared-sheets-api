@@ -72,7 +72,7 @@ body.is-player .top,body.is-player .nav{display:none!important}
 <body><div class="app">
 
 <main>
-<section id="home" class="screen active page"><div class="app-version">VADA Listen · v1.11</div><div id="stats" class="stats"></div><button class="cta" onclick="openPlayer()"><span><strong>▶ Bắt đầu luyện nghe</strong><small id="ctaInfo">Nghe các câu chưa thuộc</small></span><span style="font-size:24px">›</span></button><div class="section-head"><h2>Chủ đề của tôi</h2><button class="link" onclick="openModal('importModal')">+ Nhập bài</button></div><div id="topics"></div><div id="calendarSection" class="calendar-section"><div class="section-head"><h2>Lịch luyện nghe</h2><span class="muted" id="calendarTotal"></span></div><div class="cal-head"><button onclick="changeCalendar(-1)" aria-label="Tháng trước">‹</button><strong id="calendarTitle"></strong><button onclick="changeCalendar(1)" aria-label="Tháng sau">›</button></div><div class="calendar-grid" id="calendarGrid"></div><p class="help" id="calendarDetail">Chạm ngày để xem thời gian nghe.</p></div><div class="section-head"><h2>Ôn tập ưu tiên</h2><button class="link" onclick="showScreen('library');setFilter('hard')">Xem tất cả</button></div><div id="homePriority"></div></section>
+<section id="home" class="screen active page"><div class="app-version">VADA Listen · v1.12</div><div id="stats" class="stats"></div><button class="cta" onclick="openPlayer()"><span><strong>▶ Bắt đầu luyện nghe</strong><small id="ctaInfo">Nghe các câu chưa thuộc</small></span><span style="font-size:24px">›</span></button><div class="section-head"><h2>Chủ đề của tôi</h2><button class="link" onclick="openModal('importModal')">+ Nhập bài</button></div><div id="topics"></div><div id="calendarSection" class="calendar-section"><div class="section-head"><h2>Lịch luyện nghe</h2><span class="muted" id="calendarTotal"></span></div><div class="cal-head"><button onclick="changeCalendar(-1)" aria-label="Tháng trước">‹</button><strong id="calendarTitle"></strong><button onclick="changeCalendar(1)" aria-label="Tháng sau">›</button></div><div class="calendar-grid" id="calendarGrid"></div><p class="help" id="calendarDetail">Chạm ngày để xem thời gian nghe.</p></div><div class="section-head"><h2>Ôn tập ưu tiên</h2><button class="link" onclick="showScreen('library');setFilter('hard')">Xem tất cả</button></div><div id="homePriority"></div></section>
 <section id="player" class="screen page" style="padding-top:0">
   <div class="player-head">
     <button class="head-icon" onclick="showScreen('home')" title="Quay lại" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -188,13 +188,20 @@ async function syncNow(manual=false){
   syncApplying=true;
   if(!initialized){
     const activeRemote=remoteSent.filter(r=>String(r.data?.deleted)!=='true');
-    if(activeRemote.length||remoteSettings.length||remoteHistory.length){
+    const remoteReady=remoteSettings.some(r=>r.data?.key==='all');
+    if(remoteReady){
       sentences=activeRemote.map(sentenceFromCloud);
       const sr=remoteSettings.find(r=>r.data?.key==='all');
       if(sr){try{settings={...defaultSettings,...JSON.parse(sr.data.value||'{}')};settingsUpdatedAt=Date.parse(sr.updatedAt)||Date.now();settingsLastSerialized=JSON.stringify(settings)}catch(e){}}
       listenHistory={};topicListenHistory={};historyUpdatedAt={};remoteHistory.forEach(applyHistoryRecord);
       syncDeletedIds=[];
     }else{
+      // Settings is the bootstrap completion marker because it is written only after all
+      // sentences. If it is missing, keep local-only records and finish an interrupted upload.
+      const rmap=new Map(activeRemote.map(r=>[r.id,r]));
+      sentences=sentences.map(s=>rmap.has(s.id)?sentenceFromCloud(rmap.get(s.id)):s);
+      const localIds=new Set(sentences.map(s=>s.id));
+      for(const r of activeRemote)if(!localIds.has(r.id)){sentences.push(sentenceFromCloud(r));localIds.add(r.id)}
       for(const s of sentences){let x=await pacedCreate('Sentences',s.id,cloudSentenceData(s));s._cloudVersion=x.record.version;s.updated=Date.parse(x.record.updatedAt)||Date.now()}
       let sr=await pacedCreate('Settings','settings-main-vada-listen',{key:'all',value:JSON.stringify(settings)});settingsUpdatedAt=Date.parse(sr.record.updatedAt)||Date.now();
       for(const day of Object.keys(listenHistory)){let hr=await pacedCreate('History',historyRecordId(day),{day,topic:'__all__',seconds:historyPayload(day)});historyUpdatedAt[day]=Date.parse(hr.record.updatedAt)||Date.now()}
