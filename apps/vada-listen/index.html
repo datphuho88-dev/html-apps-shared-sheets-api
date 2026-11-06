@@ -72,7 +72,7 @@ body.is-player .top,body.is-player .nav{display:none!important}
 <body><div class="app">
 
 <main>
-<section id="home" class="screen active page"><div class="app-version">VADA Listen · v1.15</div><div id="stats" class="stats"></div><div class="home-sync"><button onclick="syncNow(true)">↻ Đồng bộ ngay</button><small id="homeSyncStatus">Chưa đồng bộ phiên này</small></div><button class="cta" onclick="playChosenTopics()"><span><strong>▶ Bắt đầu luyện nghe</strong><small id="ctaInfo">Nghe các câu chưa thuộc</small></span><span style="font-size:24px">›</span></button><div class="section-head"><h2>Chủ đề của tôi</h2><button class="link" onclick="openModal('importModal')">+ Nhập bài</button></div><div class="topic-tools"><button onclick="selectAllTopics()">Chọn tất cả</button><button onclick="clearTopicSelection()">Bỏ chọn</button><button onclick="playChosenTopics()">▶ Nghe đã chọn</button><button onclick="editSelectedTopic()">✎ Sửa</button><button onclick="deleteSelectedTopics()">✕ Xóa đã chọn</button><small id="selectionCount">Chưa chọn chủ đề</small></div><div id="topics"></div><div id="calendarSection" class="calendar-section"><div class="section-head"><h2>Lịch luyện nghe</h2><span class="muted" id="calendarTotal"></span></div><div class="cal-head"><button onclick="changeCalendar(-1)" aria-label="Tháng trước">‹</button><strong id="calendarTitle"></strong><button onclick="changeCalendar(1)" aria-label="Tháng sau">›</button></div><div class="calendar-grid" id="calendarGrid"></div><p class="help" id="calendarDetail">Chạm ngày để xem thời gian nghe.</p></div><div class="section-head"><h2>Ôn tập ưu tiên</h2><button class="link" onclick="showScreen('library');setFilter('hard')">Xem tất cả</button></div><div id="homePriority"></div></section>
+<section id="home" class="screen active page"><div class="app-version">VADA Listen · v1.16</div><div id="stats" class="stats"></div><div class="home-sync"><button onclick="syncNow(true)">↻ Đồng bộ ngay</button><small id="homeSyncStatus">Chưa đồng bộ phiên này</small></div><button class="cta" onclick="playChosenTopics()"><span><strong>▶ Bắt đầu luyện nghe</strong><small id="ctaInfo">Nghe các câu chưa thuộc</small></span><span style="font-size:24px">›</span></button><div class="section-head"><h2>Chủ đề của tôi</h2><button class="link" onclick="openModal('importModal')">+ Nhập bài</button></div><div class="topic-tools"><button onclick="selectAllTopics()">Chọn tất cả</button><button onclick="clearTopicSelection()">Bỏ chọn</button><button onclick="playChosenTopics()">▶ Nghe đã chọn</button><button onclick="editSelectedTopic()">✎ Sửa</button><button onclick="deleteSelectedTopics()">✕ Xóa đã chọn</button><small id="selectionCount">Chưa chọn chủ đề</small></div><div id="topics"></div><div id="calendarSection" class="calendar-section"><div class="section-head"><h2>Lịch luyện nghe</h2><span class="muted" id="calendarTotal"></span></div><div class="cal-head"><button onclick="changeCalendar(-1)" aria-label="Tháng trước">‹</button><strong id="calendarTitle"></strong><button onclick="changeCalendar(1)" aria-label="Tháng sau">›</button></div><div class="calendar-grid" id="calendarGrid"></div><p class="help" id="calendarDetail">Chạm ngày để xem thời gian nghe.</p></div><div class="section-head"><h2>Ôn tập ưu tiên</h2><button class="link" onclick="showScreen('library');setFilter('hard')">Xem tất cả</button></div><div id="homePriority"></div></section>
 <section id="player" class="screen page" style="padding-top:0">
   <div class="player-head">
     <button class="head-icon" onclick="showScreen('home')" title="Quay lại" aria-label="Quay lại"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -157,7 +157,7 @@ const defaultSettings={speed:1,translate:true,repeats:2,pause:1,skipKnown:true,s
 let listenHistory={},topicListenHistory={},calendarOffset=0,listenLastTick=0,listenTicker=null;let settings={...defaultSettings}, sentences=[],currentScreen='home', filter='all',sort='recent',queue=[],queueIndex=0,topicScope='',speaking=false,runToken=0,ttsTimer=null,synth=window.speechSynthesis,voices=[],supportsSpeech=!!(synth&&window.SpeechSynthesisUtterance);
 const SYNC_ENDPOINT='https://script.google.com/macros/s/AKfycbzwYFCUs_FBho0uGsdPdvvJM-dV4DIhM7Y_2n7faFsRuJj3H9T7Ijbv5cYxfmTndhyZ/exec';
 const SYNC_APP_ID='vada-listen',SYNC_TOKEN_KEY='vada-listen-sync-token-v1',SYNC_INIT_KEY='vada-listen-sync-init-v1';
-let selectedTopics=new Set();let syncToken=localStorage.getItem(SYNC_TOKEN_KEY)||'',syncBusy=false,syncTimer=null,syncApplying=false,syncDeletedIds=[],settingsUpdatedAt=0,historyUpdatedAt={},settingsLastSerialized='';
+let selectedTopics=new Set();let syncToken=localStorage.getItem(SYNC_TOKEN_KEY)||'',syncBusy=false,syncTimer=null,syncApplying=false,syncDeletedIds=[],settingsUpdatedAt=0,historyUpdatedAt={},settingsLastSerialized='',lastFullSyncAt=Number(localStorage.getItem('vada-listen-last-full-sync')||0);
 
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function newId(){return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,9)}`}
@@ -202,15 +202,29 @@ async function connectGoogleSync(){let v=String($('syncTokenInput')?.value||'').
 function disconnectGoogleSync(){syncToken='';localStorage.removeItem(SYNC_TOKEN_KEY);localStorage.removeItem(SYNC_INIT_KEY);clearTimeout(syncTimer);setSyncStatus('Đã ngắt Google Sheets. Dữ liệu trên máy vẫn được giữ.',false);toast('Đã ngắt đồng bộ trên thiết bị này')}
 async function syncNow(manual=false){
  if(!syncToken){setSyncStatus('Chưa kết nối Google Sheets.',false);if(manual)toast('Hãy nhập mã đồng bộ trong Cài đặt');return}
- if(syncBusy)return;syncBusy=true;setSyncStatus('Đang đồng bộ…');
+ if(syncBusy){if(manual)toast('Đồng bộ đang chạy, không cần bấm lại');return}syncBusy=true;setSyncStatus('Đang tải câu học…');
  try{
-  // Apps Script uses a global script lock; simultaneous requests can block one another.
-  // Read in sequence and show the count immediately once sentence records arrive.
-  const remoteSent=await cloudList('Sentences');
-  setSyncStatus('Đã tải '+remoteSent.filter(r=>String(r.data?.deleted)!=='true').length+' câu · đang kiểm tra cài đặt…');
-  const remoteSettings=await cloudList('Settings');
-  const remoteHistory=await cloudList('History');
+  // Quick sync reads only sentence records; Settings and History are refreshed
+  // on explicit manual sync and periodically, avoiding two unnecessary network round-trips.
   const initialized=localStorage.getItem(SYNC_INIT_KEY)==='1';
+  const fullSync=manual||!initialized||Date.now()-lastFullSyncAt>10*60*1000;
+  const remoteSent=await cloudList('Sentences');
+  const activeSent=remoteSent.filter(r=>String(r.data?.deleted)!=='true');
+  // Show newly downloaded sentences immediately, even while full sync continues.
+  // Do not overwrite locally modified records during this early presentation step.
+  const localIds=new Set(sentences.map(s=>s.id));
+  let justAdded=0;
+  for(const r of activeSent)if(!localIds.has(r.id)&&!syncDeletedIds.includes(r.id)){
+    sentences.push(sentenceFromCloud(r));localIds.add(r.id);justAdded++;
+  }
+  if(justAdded){
+    syncApplying=true;save();syncApplying=false;
+    renderHome();renderLibrary();
+    if(currentScreen==='player'){buildQueue(current()?.id);renderPlayer()}
+  }
+  setSyncStatus('Đã tải '+activeSent.length+' câu'+(fullSync?' · đang đồng bộ lịch và cài đặt…':' · đang cập nhật thay đổi…'));
+  const remoteSettings=fullSync?await cloudList('Settings'):[];
+  const remoteHistory=fullSync?await cloudList('History'):[];
   syncApplying=true;
   if(!initialized){
     // Never replace local learning data with a partial remote bootstrap.
@@ -275,13 +289,14 @@ async function syncNow(manual=false){
     const freshRemoteIds=new Set(remoteSent.map(r=>r.id));
     for(const s of sentences){if(!freshRemoteIds.has(s.id)&&!syncDeletedIds.includes(s.id)){let x=await pacedCreate('Sentences',s.id,cloudSentenceData(s));s._cloudVersion=x.record.version;s.updated=Date.parse(x.record.updatedAt)||Date.now()}}
     const sr=remoteSettings.find(r=>r.data?.key==='all');
-    if(!sr){let x=await pacedCreate('Settings','settings-main-vada-listen',{key:'all',value:JSON.stringify(settings)});settingsUpdatedAt=Date.parse(x.record.updatedAt)||Date.now()}
-    else {let rt=Date.parse(sr.updatedAt)||0;if(settingsUpdatedAt>rt+1500){let x=await cloudCall('update','Settings',{id:sr.id,version:sr.version,data:{key:'all',value:JSON.stringify(settings)}});settingsUpdatedAt=Date.parse(x.record.updatedAt)||Date.now()}else if(rt>settingsUpdatedAt+1500){try{settings={...defaultSettings,...JSON.parse(sr.data.value||'{}')};settingsUpdatedAt=rt;settingsLastSerialized=JSON.stringify(settings)}catch(e){}}}
+    if(fullSync&&!sr){let x=await pacedCreate('Settings','settings-main-vada-listen',{key:'all',value:JSON.stringify(settings)});settingsUpdatedAt=Date.parse(x.record.updatedAt)||Date.now()}
+    else if(fullSync){let rt=Date.parse(sr.updatedAt)||0;if(settingsUpdatedAt>rt+1500){let x=await cloudCall('update','Settings',{id:sr.id,version:sr.version,data:{key:'all',value:JSON.stringify(settings)}});settingsUpdatedAt=Date.parse(x.record.updatedAt)||Date.now()}else if(rt>settingsUpdatedAt+1500){try{settings={...defaultSettings,...JSON.parse(sr.data.value||'{}')};settingsUpdatedAt=rt;settingsLastSerialized=JSON.stringify(settings)}catch(e){}}}
     const hrmap=new Map(remoteHistory.map(r=>[r.data?.day,r]));
-    const days=new Set([...Object.keys(listenHistory),...remoteHistory.map(r=>r.data?.day).filter(Boolean)]);
+    const days=fullSync?new Set([...Object.keys(listenHistory),...remoteHistory.map(r=>r.data?.day).filter(Boolean)]):new Set();
     for(const day of days){let r=hrmap.get(day),lt=Number(historyUpdatedAt[day])||0,rt=r?(Date.parse(r.updatedAt)||0):0;if(!r){let x=await pacedCreate('History',historyRecordId(day),{day,topic:'__all__',seconds:historyPayload(day)});historyUpdatedAt[day]=Date.parse(x.record.updatedAt)||Date.now();await wait(520)}else if(lt>rt+1500){let x=await cloudCall('update','History',{id:r.id,version:r.version,data:{day,topic:'__all__',seconds:historyPayload(day)}});historyUpdatedAt[day]=Date.parse(x.record.updatedAt)||Date.now();await wait(520)}else if(rt>lt+1500)applyHistoryRecord(r)}
   }
-  buildQueue(current()?.id);save();renderHome();renderLibrary();if(currentScreen==='settings')renderSettings();setSyncStatus('Đã đồng bộ Google Sheets · '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),true);if(manual)toast('Đồng bộ Google Sheets hoàn tất');
+  if(fullSync){lastFullSyncAt=Date.now();localStorage.setItem('vada-listen-last-full-sync',String(lastFullSyncAt))}
+  buildQueue(current()?.id);save();renderHome();renderLibrary();if(currentScreen==='settings')renderSettings();setSyncStatus('Đã đồng bộ '+(fullSync?'toàn bộ':'câu học')+' · '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),true);if(manual)toast('Đồng bộ Google Sheets hoàn tất');
  }catch(e){setSyncStatus('Lỗi đồng bộ: '+(e.message||e),false);if(manual)toast('Không đồng bộ được: '+(e.message||e))}
  finally{syncApplying=false;syncBusy=false}
 }
